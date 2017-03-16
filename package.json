@@ -1,0 +1,20 @@
+{
+  "name": "quora-parser",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "async": "2.1.5",
+    "cheerio": "0.22.0",
+    "debug": "2.6.0",
+    "express": "4.14.1",
+    "lodash": "4.17.4",
+    "memory-cache": "^0.1.6",
+    "morgan": "1.7.0",
+    "nodemailer": "^3.1.7",
+    "repeat": "0.0.6",
+    "request": "2.81.0"
+  }
+}
