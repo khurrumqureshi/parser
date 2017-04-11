@@ -11,11 +11,10 @@ var Repeat = require('repeat');
 var nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport({
-    host: 'smtp.sparkpostmail.com',
-    port: 587,
+    service: 'Yahoo',
     auth: {
-        user: 'SMTP_Injection',
-        pass: '87f55a9c87ee222d3e7021a08a6a7ea614ea50be'
+        user: 'sandyroberts23@yahoo.com',
+        pass: 'Alpha123+'
     }
 });
 
@@ -33,12 +32,20 @@ server.listen(3040, '', function () {
     console.log('------------------------------------------');
     console.log('Parser - > %s', "http://localhost :3040");
     console.log('------------------------------------------');
+    // Repeat(function (done) {
+    //     parseProfile(function () {
+    //         done();
+    //     })
+    // })
+    //     .every(30, 'minutes')
+    //     .start.in(5, 'minutes');
+
     Repeat(function (done) {
         parseQuestions(function () {
             done();
         })
     })
-        .every(5, 'minutes')
+        .every(10, 'minutes')
         .start.now();
 });
 
@@ -67,22 +74,58 @@ function parseQuestions(callback) {
         cache.put('questions', _.cloneDeep(questions));
         console.log(changeStatusQuestion);
         if(changeStatusQuestion.length > 0){
-            sendEmail(changeStatusQuestion);
+            sendEmail(changeStatusQuestion, 'Quora Update - New Answers Found');
         }
         callback();
     })
 }
 
-function sendEmail(data) {
+function parseProfile(callback) {
+    var cacheQuestions = cache.get('questions');
+    var changeStatusQuestion = [];
+    async.forEachSeries(questions, function (question, cb) {
+        if (question.profile && question.profile.length > 0) {
+            request.get({url: question.profile}, function (e, r, html) {
+                if (e) {
+                    cb();
+                }
+                else {
+                    var $ = cheerio.load(html);
+                    var data = $('.list_header div').text();
+                    var arr = data ? data.split(' ') : [];
+                    question.profileAnswerCount = arr && arr.length > 1 ? _.parseInt(arr[0]) : 0;
+                    var cacheQuestion = _.find(cacheQuestions, {code: question.code}) || {};
+                    console.log('Cache Profile Count -> ' + cacheQuestion.profileAnswerCount + ' Current Count -> ' + question.profileAnswerCount + ' Question: ' + question.url);
+                    if (question.profileAnswerCount < cacheQuestion.profileAnswerCount) {
+                        changeStatusQuestion.push(question);
+                    }
+                    cb();
+                }
+            });
+        }
+        else {
+            cb();
+        }
+    }, function (err, result) {
+        cache.put('questions', _.cloneDeep(questions));
+        console.log(changeStatusQuestion);
+        if (changeStatusQuestion.length > 0) {
+            sendEmail(changeStatusQuestion, 'Quora Update - Profile Answer Deleted');
+        }
+        callback();
+    })
+}
+
+function sendEmail(data, subject) {
     // setup email data with unicode symbols
     var html = '';
     _.forEach(data, function (obj) {
-        html += obj.url + '<br><br>';
+        html += obj.url + ' ' + obj.profile + '<br><br>';
     });
     var mailOptions = {
-        from: 'sandyrobertsreviews@sparkpostbox.com',
+        from: 'sandyroberts23@yahoo.com',
         to: 'mkhurrumq@gmail.com, mafskhan2013@gmail.com',
-        subject: 'Quora Update - New Answers',
+        subject: subject,
         text: 'Hello,',
         html: html
     };
