@@ -124,7 +124,7 @@ function sendEmail(data, subject) {
     });
     var mailOptions = {
         from: 'sandyroberts23@yahoo.com',
-        to: 'mkhurrumq@gmail.com, mafskhan2013@gmail.com, ahsankhan1911@gmail.com',
+        to: 'mkhurrumq@gmail.com, mafskhan2013@gmail.com, ahsankhan1911@gmail.com, fizak749@gmail.com',
         subject: subject,
         text: 'Hello,',
         html: html
