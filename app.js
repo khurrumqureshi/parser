@@ -94,6 +94,7 @@ function parseProfile(callback) {
                     var data = $('.list_header div').text();
                     var arr = data ? data.split(' ') : [];
                     question.profileAnswerCount = arr && arr.length > 1 ? _.parseInt(arr[0]) : 0;
+                    question.profileAnswerCount = question.profileAnswerCount > 0 ? question.profileAnswerCount : cacheQuestion.profileAnswerCount;
                     var cacheQuestion = _.find(cacheQuestions, {code: question.code}) || {};
                     console.log('Cache Profile Count -> ' + cacheQuestion.profileAnswerCount + ' Current Count -> ' + question.profileAnswerCount + ' Question: ' + question.url);
                     if (question.profileAnswerCount < cacheQuestion.profileAnswerCount) {
