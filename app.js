@@ -63,6 +63,7 @@ function parseQuestions(callback) {
                 var arr = data ? data.split(' ') : [];
                 question.answerCount = arr && arr.length > 0 ? _.parseInt(arr[0]) : 0;
                 var cacheQuestion = _.find(cacheQuestions, {code: question.code}) || {};
+                question.answerCount = question.answerCount > 0 ? question.answerCount : cacheQuestion.answerCount;
                 console.log('Cache Count -> ' + cacheQuestion.answerCount + ' Current Count -> ' + question.answerCount);
                 if (question.answerCount > cacheQuestion.answerCount) {
                     changeStatusQuestion.push(question);
